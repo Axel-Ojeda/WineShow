@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Product Info</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+    </head>
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .card {
+            border: 1px solid #ddd;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+    <body class="container mt-5">
+        <div class="form-group">
+            <label for="input-text">Enter product name:</label>
+            <input id="input-text" type="text" class="form-control" placeholder="Enter product name" list="product-list">
+            <datalist id="product-list"></datalist>
+        </div>
+        <div class="text-center mt-3">
+            <button id="load-product" class="btn btn-primary">Load Product</button>
+        </div>
+
+        <div class="card mt-5">
+            <div class="card-body">
+                <h1 class="product-name card-title" id="product-name"></h1>
+                <h3 class="brand card-subtitle text-muted mb-2" id="brand"></h3>
+                <p class="price font-weight-bold" id="price"></p>
+                <p class="description" id="description"></p>
+            </div>
+        </div>
+        <script>
+            // Cargar el archivo CSV al inicio
+            let products = [];
+        
+            document.addEventListener('DOMContentLoaded', function () {
+                Papa.parse('./products.csv', {
+                    download: true,
+                    header: true,
+                    complete: function (results) {
+                        products = results.data;
+                        populateProductList(products);
+                    },
+                    error: function (error) {
+                        console.error('Error parsing CSV:', error);
+                    }
+                });
+            });
+        
+            // Poblar la lista de productos para el autocompletado
+            function populateProductList(products) {
+                const dataList = document.getElementById('product-list');
+                products.forEach(product => {
+                    const option = document.createElement('option');
+                    option.value = product.ProductName;
+                    dataList.appendChild(option);
+                });
+            }
+        
+            // Cargar información del producto seleccionado
+            document.getElementById('load-product').addEventListener('click', function () {
+                const productName = document.getElementById('input-text').value;
+                const product = products.find(p => p.ProductName.toLowerCase() === productName.toLowerCase());
+        
+                if (product) {
+                    document.getElementById('product-name').textContent = product.ProductName;
+                    document.getElementById('brand').textContent = product.Brand;
+                    document.getElementById('price').textContent = `$${product.Price}`;
+                    document.getElementById('description').textContent = product.Description;
+                } else {
+                    document.getElementById('product-name').textContent = 'Product not found';
+                    document.getElementById('brand').textContent = '';
+                    document.getElementById('price').textContent = '';
+                    document.getElementById('description').textContent = '';
+                }
+            });
+        </script>
+    </body>
+</html>
