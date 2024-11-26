@@ -39,7 +39,7 @@
             let products = [];
         
             document.addEventListener('DOMContentLoaded', function () {
-                Papa.parse('./products.csv', {
+                Papa.parse('https://raw.githubusercontent.com/Axel-Ojeda/testCSV/refs/heads/main/products.csv'/*Exchange this url for ""./products.csv" and see the error for yourself*/, {
                     download: true,
                     header: true,
                     complete: function (results) {
